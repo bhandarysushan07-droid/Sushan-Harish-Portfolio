@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sushan Harish — Aerospace Systems &amp; Test Engineer</title>
+<meta name="description" content="Sushan Harish — Aerospace Systems & Test Engineer. Test rig development, instrumentation, DAQ and V&amp;V experience across Rolls-Royce, Vertical Aerospace and Honeywell Aerospace programmes. MSc Aerospace Engineering, Kingston University." />
+<meta name="author" content="Sushan Harish" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Sushan Harish — Aerospace Systems & Test Engineer" />
+<meta property="og:description" content="Test rig development, instrumentation, DAQ and V&V engineer. Rolls-Royce, Vertical Aerospace, Honeywell Aerospace. MSc Aerospace Engineering (Distinction), Kingston University." />
+<meta property="og:image" content="assets/img/og-cover.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTAiIGZpbGw9IiNFOEEzM0QiLz4KICA8dGV4dCB4PSIzMiIgeT0iNDIiIGZvbnQtZmFtaWx5PSJTcGFjZSBHcm90ZXNrLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNiIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzBBMEUxNiI+U0g8L3RleHQ+Cjwvc3ZnPgo=" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   DESIGN TOKENS
+   Direction: instrumentation / blueprint — deep graphite-navy
+   background, instrument-panel amber accent, cool signal-cyan
+   for data traces. Headings in Space Grotesk, body in Inter,
+   data/labels in JetBrains Mono.
+   ========================================================= */
+:root{
+  --bg: #0A0E16;
+  --bg-panel: #10151F;
+  --bg-panel-2: #151B28;
+  --line: rgba(231,234,240,0.09);
+  --line-strong: rgba(231,234,240,0.16);
+
+  --text: #E7EAF0;
+  --text-muted: #8D96AC;
+  --text-faint: #5B6478;
+
+  --amber: #E8A33D;
+  --amber-dim: #8A6528;
+  --cyan: #5FD9CC;
+  --cyan-dim: #2E7A72;
+
+  --radius-s: 4px;
+  --radius-m: 8px;
+
+  --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  --maxw: 1180px;
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+*, *::before, *::after{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img{ max-width: 100%; display: block; }
+ul, ol{ margin: 0; padding: 0; list-style: none; }
+a{ color: inherit; text-decoration: none; }
+h1,h2,h3,h4{ font-family: var(--font-display); font-weight: 600; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+p{ margin: 0 0 1em; color: var(--text-muted); }
+strong{ color: var(--text); font-weight: 600; }
+sub{ font-size: 0.7em; }
+
+.wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+.skip-link{
+  position: absolute; left: -999px; top: 0;
+  background: var(--amber); color: #171207; padding: 10px 16px;
+  z-index: 200; font-family: var(--font-mono); font-size: 0.85rem;
+}
+.skip-link:focus{ left: 12px; top: 12px; }
+
+:focus-visible{
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+.site-header{
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,14,22,0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.header-inner{
+  display: flex; align-items: center; gap: 24px;
+  height: 68px;
+}
+.brand{ display: flex; align-items: center; gap: 12px; margin-right: auto; }
+.brand-mark{
+  font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500;
+  color: var(--bg); background: var(--amber);
+  width: 34px; height: 34px; border-radius: var(--radius-s);
+  display: flex; align-items: center; justify-content: center;
+  letter-spacing: 0.02em;
+}
+.brand-text{ display: flex; flex-direction: column; line-height: 1.2; font-weight: 600; font-family: var(--font-display); font-size: 0.98rem; }
+.brand-sub{ font-family: var(--font-mono); font-weight: 400; font-size: 0.68rem; color: var(--text-faint); letter-spacing: 0.03em; text-transform: uppercase; }
+
+.main-nav{ display: flex; gap: 30px; font-size: 0.92rem; }
+.main-nav a{ color: var(--text-muted); position: relative; padding: 4px 0; }
+.main-nav a:hover{ color: var(--text); }
+.main-nav a::after{
+  content:""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px;
+  background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
+}
+.main-nav a:hover::after{ transform: scaleX(1); }
+
+.btn{
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.02em;
+  padding: 10px 18px; border-radius: var(--radius-s);
+  border: 1px solid transparent; white-space: nowrap;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, transform .15s ease;
+}
+.btn-ghost{ border-color: var(--line-strong); color: var(--text); }
+.btn-ghost:hover{ border-color: var(--amber); color: var(--amber); }
+.btn-primary{ background: var(--amber); color: #171207; }
+.btn-primary:hover{ background: #f0b158; transform: translateY(-1px); }
+
+.nav-toggle{
+  display: none; flex-direction: column; gap: 4px; background: none; border: 0; padding: 8px; cursor: pointer;
+}
+.nav-toggle span{ width: 20px; height: 2px; background: var(--text); display: block; }
+
+.mobile-nav{
+  display: none; flex-direction: column; gap: 2px;
+  border-top: 1px solid var(--line);
+  padding: 8px 28px 20px;
+}
+.mobile-nav a{ padding: 12px 0; color: var(--text-muted); border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+.mobile-nav .btn{ margin-top: 14px; align-self: flex-start; }
+.site-header.nav-open .mobile-nav{ display: flex; }
+
+@media (max-width: 880px){
+  .main-nav, .header-cta{ display: none; }
+  .nav-toggle{ display: flex; }
+}
+
+/* =========================================================
+   SECTION SCAFFOLDING
+   ========================================================= */
+.section{ padding: 96px 0; border-bottom: 1px solid var(--line); }
+.section-head{ margin-bottom: 40px; max-width: 640px; }
+.section-num{
+  font-family: var(--font-mono); color: var(--amber); font-size: 0.82rem;
+  letter-spacing: 0.08em; display: block; margin-bottom: 10px;
+}
+.section-head h2{ font-size: clamp(1.6rem, 2.4vw, 2.1rem); margin-bottom: 0.3em; }
+.section-sub{ color: var(--text-muted); margin: 0; }
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{ padding: 64px 0 96px; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+.hero::before{
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(95,217,204,0.05), transparent 40%),
+    repeating-linear-gradient(90deg, rgba(231,234,240,0.028) 0 1px, transparent 1px 88px);
+  pointer-events: none;
+}
+.hero-grid{
+  display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items: center; position: relative;
+}
+.eyebrow{
+  font-family: var(--font-mono); font-size: 0.82rem; color: var(--cyan);
+  letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 18px;
+}
+.hero h1{
+  font-size: clamp(2.1rem, 4vw, 3.4rem); line-height: 1.08; margin-bottom: 0.5em;
+  color: var(--text);
+}
+.hero-lede{ font-size: 1.08rem; max-width: 54ch; }
+.hero-actions{ display: flex; gap: 14px; margin: 28px 0 40px; flex-wrap: wrap; }
+
+.hero-facts{ display: flex; gap: 34px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 22px; }
+.hero-facts li{ display: flex; flex-direction: column; gap: 6px; }
+.fact-num{ font-family: var(--font-mono); font-size: 1.15rem; color: var(--amber); font-weight: 500; }
+.fact-label{ font-size: 0.78rem; color: var(--text-faint); line-height: 1.35; }
+
+/* scaled-residuals convergence panel — styled on real Fluent runs,
+   pure CSS/SMIL animation (no JS) so it always renders, including
+   when the file is opened locally/offline */
+.resid-panel{
+  background: var(--bg-panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-m);
+  padding: 18px 18px 16px;
+  box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6);
+}
+.resid-head{
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-faint);
+  letter-spacing: 0.04em; margin-bottom: 10px; flex-wrap: wrap;
+}
+.resid-live{ display: flex; align-items: center; gap: 6px; color: var(--amber); }
+.live-dot{
+  width: 7px; height: 7px; border-radius: 50%; background: var(--amber); display: inline-block;
+  animation: livePulse 1.6s ease-in-out infinite;
+}
+@keyframes livePulse{ 0%, 100%{ opacity: 1; } 50%{ opacity: 0.25; } }
+
+.resid-svg{ width: 100%; height: auto; display: block; background: #0C111A; border-radius: var(--radius-s); }
+.resid-grid line{ stroke: rgba(231,234,240,0.08); stroke-width: 1; }
+.resid-grid text{ font-family: var(--font-mono); font-size: 8px; fill: var(--text-faint); }
+.resid-axis-label{ font-family: var(--font-mono); font-size: 8px; fill: var(--text-faint); text-anchor: middle; }
+.resid-line{ stroke-width: 1.5; }
+.resid-line--continuity{ stroke: var(--cyan); }
+.resid-line--nut{ stroke: #8FD65C; }
+.resid-line--energy{ stroke: var(--amber); opacity: 0.85; }
+.resid-line--xvel{ stroke: #E06B6B; opacity: 0.8; }
+.resid-line--yvel{ stroke: #6B8FE0; opacity: 0.8; }
+.resid-line--zvel{ stroke: #A26BE0; opacity: 0.8; }
+.resid-scan{ stroke: var(--amber); stroke-width: 1; opacity: 0.35; }
+
+.resid-legend{
+  display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px;
+  font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-faint);
+}
+.resid-legend span{ display: flex; align-items: center; gap: 6px; }
+.dot{ width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.dot--continuity{ background: var(--cyan); }
+.dot--xvel{ background: #E06B6B; }
+.dot--energy{ background: var(--amber); }
+.dot--nut{ background: #8FD65C; }
+
+.resid-console{
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line);
+  height: 18px; overflow: hidden; position: relative;
+}
+.resid-console ul{ position: absolute; inset: 0; }
+.resid-console li{
+  font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-faint);
+  position: absolute; inset: 0; opacity: 0;
+  animation: consoleCycle 8s linear infinite;
+}
+.resid-console li:nth-child(1){ animation-delay: 0s; }
+.resid-console li:nth-child(2){ animation-delay: 2s; }
+.resid-console li:nth-child(3){ animation-delay: 4s; }
+.resid-console li:nth-child(4){ animation-delay: 6s; }
+@keyframes consoleCycle{
+  0%{ opacity: 0; transform: translateY(4px); }
+  5%, 20%{ opacity: 1; transform: translateY(0); }
+  25%, 100%{ opacity: 0; }
+}
+
+@media (max-width: 980px){
+  .hero-grid{ grid-template-columns: 1fr; }
+  .hero-resid{ order: -1; max-width: 460px; }
+}
+
+/* =========================================================
+   ABOUT
+   ========================================================= */
+.about-grid{ display: grid; grid-template-columns: 260px 1fr; gap: 48px; }
+.about-body p{ max-width: 68ch; font-size: 1.02rem; }
+.about-body p:last-child{ color: var(--text); }
+@media (max-width: 880px){ .about-grid{ grid-template-columns: 1fr; } }
+
+/* =========================================================
+   TIMELINE / EXPERIENCE
+   ========================================================= */
+.timeline{ display: flex; flex-direction: column; }
+.timeline-item{
+  display: grid; grid-template-columns: 200px 1fr; gap: 32px;
+  padding: 36px 0; border-top: 1px solid var(--line);
+}
+.timeline-item:first-child{ border-top: 1px solid var(--line-strong); }
+.ti-meta{ display: flex; flex-direction: column; gap: 4px; font-family: var(--font-mono); font-size: 0.8rem; }
+.ti-date{ color: var(--amber); }
+.ti-loc{ color: var(--text-faint); }
+.ti-body h3{ font-size: 1.15rem; margin-bottom: 0.2em; display: inline; }
+.ti-contract{ font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint); font-weight: 400; margin-left: 6px; }
+.ti-org{ color: var(--cyan); font-size: 0.92rem; margin: 4px 0 14px; font-weight: 500; }
+.ti-points{ display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+.ti-points li{
+  position: relative; padding-left: 18px; color: var(--text-muted); font-size: 0.95rem;
+}
+.ti-points li::before{ content: "—"; position: absolute; left: 0; color: var(--text-faint); }
+.ti-tags{ display: flex; flex-wrap: wrap; gap: 8px; }
+.ti-tags span{
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-faint);
+  border: 1px solid var(--line-strong); padding: 4px 9px; border-radius: 20px;
+}
+.ti-aside{
+  font-size: 0.9rem; font-style: italic; color: var(--text-faint);
+  border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; max-width: 60ch;
+}
+@media (max-width: 760px){
+  .timeline-item{ grid-template-columns: 1fr; gap: 10px; }
+}
+
+/* =========================================================
+   PROJECTS / CASE STUDIES
+   ========================================================= */
+.case{ padding: 56px 0; border-top: 1px solid var(--line); }
+.case:first-of-type{ border-top: 1px solid var(--line-strong); padding-top: 8px; }
+.case-tag{
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--amber);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+}
+.case h3{ font-size: 1.5rem; max-width: 22ch; margin-bottom: 0.25em; }
+.case-role{ color: var(--text-faint); font-family: var(--font-mono); font-size: 0.82rem; margin-bottom: 32px; }
+
+.case-copy--full{ max-width: 78ch; }
+.case-copy h4{
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--cyan); font-family: var(--font-mono); font-weight: 500; margin: 28px 0 10px;
+}
+.case-copy h4:first-child{ margin-top: 0; }
+.case-copy p{ font-size: 0.97rem; max-width: 62ch; }
+.case-list{ display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
+.case-list li{ position: relative; padding-left: 18px; font-size: 0.95rem; color: var(--text-muted); max-width: 62ch; }
+.case-list li::before{ content: "—"; position: absolute; left: 0; color: var(--text-faint); }
+
+.arch-diagram{
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  background: var(--bg-panel); border: 1px solid var(--line); border-radius: var(--radius-m);
+  padding: 20px; margin: 14px 0 6px;
+}
+.arch-node{
+  font-family: var(--font-mono); font-size: 0.74rem; color: var(--text);
+  background: var(--bg-panel-2); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-s); padding: 10px 12px; text-align: center; line-height: 1.4;
+}
+.arch-node span{ color: var(--text-faint); font-size: 0.9em; }
+.arch-arrow{ color: var(--amber); font-family: var(--font-mono); }
+.fig-caption{ font-size: 0.78rem; color: var(--text-faint); font-style: italic; margin-top: 4px; }
+
+
+
+/* =========================================================
+   TOOLKIT
+   ========================================================= */
+.toolkit-grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+.toolkit-group h3{
+  font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-faint); font-family: var(--font-mono); font-weight: 500;
+  margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line);
+}
+.chip-list{ display: flex; flex-direction: column; gap: 10px; }
+.chip-list li{ font-size: 0.92rem; color: var(--text); position: relative; padding-left: 14px; }
+.chip-list li::before{ content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; background: var(--amber); border-radius: 50%; }
+@media (max-width: 980px){ .toolkit-grid{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px){ .toolkit-grid{ grid-template-columns: 1fr; } }
+
+/* =========================================================
+   EDUCATION
+   ========================================================= */
+.edu-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 44px; }
+.edu-item{
+  background: var(--bg-panel); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 26px;
+}
+.edu-item--award{ border-color: var(--amber-dim); position: relative; }
+.edu-award-badge{
+  font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.03em;
+  color: var(--amber); border: 1px solid var(--amber-dim); border-radius: 20px;
+  padding: 6px 12px; display: inline-block; margin-bottom: 16px; line-height: 1.4;
+}
+.edu-award-badge span{ display: block; color: var(--text-faint); }
+.edu-item h3{ font-size: 1.05rem; }
+.edu-grade{ color: var(--text-faint); font-weight: 400; font-size: 0.85em; }
+.edu-org{ color: var(--cyan); font-size: 0.9rem; margin-bottom: 8px; }
+.edu-note{ font-size: 0.9rem; margin-bottom: 0; }
+@media (max-width: 760px){ .edu-grid{ grid-template-columns: 1fr; } }
+
+.cert-list h3{
+  font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-faint); font-family: var(--font-mono); font-weight: 500; margin-bottom: 14px;
+}
+.cert-list ul{ display: flex; flex-direction: column; gap: 10px; }
+.cert-list li{ font-size: 0.94rem; color: var(--text); padding-left: 14px; position: relative; }
+.cert-list li::before{ content: ""; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; background: var(--cyan); border-radius: 50%; }
+
+/* =========================================================
+   CONTACT
+   ========================================================= */
+.contact{ border-bottom: none; }
+.contact-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.contact-lede{ font-size: 1.02rem; max-width: 42ch; }
+.contact-details{ display: flex; flex-direction: column; gap: 0; }
+.contact-link{
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 0; border-bottom: 1px solid var(--line);
+  transition: padding-left .18s ease;
+}
+a.contact-link:hover{ padding-left: 8px; color: var(--amber); }
+.contact-label{ font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
+.contact-value{ font-size: 0.98rem; }
+.contact-cv-btn{ margin-top: 24px; align-self: flex-start; }
+@media (max-width: 760px){ .contact-grid{ grid-template-columns: 1fr; } }
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.site-footer{ padding: 28px 0 40px; }
+.footer-inner{
+  display: flex; gap: 10px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-faint);
+}
+.footer-sep{ opacity: 0.5; }
+
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="site-header">
+  <div class="wrap header-inner">
+    <a href="#top" class="brand" aria-label="Sushan Harish — home">
+      <span class="brand-mark" aria-hidden="true">SH</span>
+      <span class="brand-text">Sushan Harish<span class="brand-sub">Aerospace Systems &amp; Test Engineer</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#experience">Experience</a>
+      <a href="#projects">Case Studies</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <a href="#experience">Experience</a>
+    <a href="#projects">Case Studies</a>
+    <a href="#toolkit">Toolkit</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Aerospace Systems &amp; Test Engineer — Bristol, UK</p>
+        <h1>Test rigs, from schematic&nbsp;to&nbsp;entry&#8209;into&#8209;service.</h1>
+        <p class="hero-lede">
+          I build and commission the environmental and functional test rigs that qualify aerospace hardware —
+          fluid, electrical, DAQ and control systems integrated, instrumented, and verified before they touch
+          a real programme. Most recently across five-plus concurrent rig builds for Rolls-Royce, Vertical Aerospace
+          and MBDA. Before that, three years inside a regulated MRO floor at Honeywell Aerospace.
+        </p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-primary">View case studies</a>
+        </div>
+        <ul class="hero-facts" aria-label="Key facts">
+          <li><span class="fact-num">5+</span><span class="fact-label">concurrent rig programmes<br>currently supported</span></li>
+          <li><span class="fact-num">-0.2 → -1.0 bar</span><span class="fact-label">altitude envelope (gauge)<br>designed &amp; commissioned</span></li>
+          <li><span class="fact-num">AS9100 / EASA</span><span class="fact-label">quality systems<br>background</span></li>
+        </ul>
+      </div>
+
+      <div class="hero-resid" aria-hidden="true">
+        <div class="resid-panel">
+          <div class="resid-head">
+            <span class="resid-live"><span class="live-dot"></span>LIVE</span>
+            <span>ANSYS FLUENT — SCALED RESIDUALS</span>
+          </div>
+          <svg viewBox="0 0 560 260" class="resid-svg" preserveAspectRatio="xMidYMid meet">
+            <!-- representative convergence trend, styled on my own Fluent runs — illustrative, not a captured result -->
+            <g class="resid-grid">
+              <line x1="50" y1="10" x2="550" y2="10" /><text x="8" y="14">1e+00</text>
+              <line x1="50" y1="54" x2="550" y2="54" /><text x="8" y="58">1e-02</text>
+              <line x1="50" y1="98" x2="550" y2="98" /><text x="8" y="102">1e-04</text>
+              <line x1="50" y1="142" x2="550" y2="142" /><text x="8" y="146">1e-06</text>
+              <line x1="50" y1="186" x2="550" y2="186" /><text x="8" y="190">1e-08</text>
+              <line x1="50" y1="230" x2="550" y2="230" /><text x="8" y="234">1e-10</text>
+              <line x1="50" y1="10" x2="50" y2="230" /><line x1="175" y1="10" x2="175" y2="230" />
+              <line x1="300" y1="10" x2="300" y2="230" /><line x1="425" y1="10" x2="425" y2="230" />
+              <line x1="550" y1="10" x2="550" y2="230" />
+            </g>
+            <g fill="none" stroke-linejoin="round" stroke-linecap="round">
+              <path class="resid-line resid-line--continuity" d="M50,12 C160,40 260,70 340,95 S480,128 550,148" />
+              <path class="resid-line resid-line--nut" d="M50,34 C90,58 110,72 130,74 S200,86 260,100 S380,118 460,130 S520,138 550,142" />
+              <path class="resid-line resid-line--energy" d="M50,120 C160,132 260,146 360,158 S500,172 550,178" />
+              <path class="resid-line resid-line--xvel" d="M50,128 C160,148 260,168 360,184 S500,202 550,208" />
+              <path class="resid-line resid-line--yvel" d="M50,132 C160,152 260,172 360,188 S500,206 550,212" />
+              <path class="resid-line resid-line--zvel" d="M50,136 C160,156 260,176 360,192 S500,210 550,216" />
+            </g>
+            <line class="resid-scan" x1="50" y1="10" x2="50" y2="230">
+              <animate attributeName="x1" values="50;550;50" dur="6s" repeatCount="indefinite" />
+              <animate attributeName="x2" values="50;550;50" dur="6s" repeatCount="indefinite" />
+            </line>
+            <text x="290" y="252" class="resid-axis-label">Iterations</text>
+          </svg>
+          <div class="resid-legend">
+            <span><i class="dot dot--continuity"></i>continuity</span>
+            <span><i class="dot dot--xvel"></i>x/y/z-vel</span>
+            <span><i class="dot dot--energy"></i>energy</span>
+            <span><i class="dot dot--nut"></i>nut</span>
+          </div>
+          <div class="resid-console">
+            <ul>
+              <li>iter 142 · continuity 9.3e-04 · lift_coeff 2.587e-01</li>
+              <li>iter 143 · continuity 8.9e-04 · drag_coeff 1.811e-02</li>
+              <li>iter 144 · continuity 8.7e-04 · nut 3.06e-07</li>
+              <li>iter 145 · continuity 8.4e-04 · energy 1.35e-08</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT / POSITIONING ============ -->
+  <section class="section about" id="about">
+    <div class="wrap about-grid">
+      <div class="section-head">
+        <span class="section-num">§01</span>
+        <h2>Positioning</h2>
+      </div>
+      <div class="about-body">
+        <p>
+          My background runs mechanical engineering, then aerospace: a BEng in mechanical engineering, an MSc in
+          aerospace engineering carrying the School of Engineering's Best Postgraduate Project award, and three
+          years split between a regulated MRO floor and a systems/test engineering consultancy building rigs for
+          Rolls-Royce and Vertical Aerospace programmes.
+        </p>
+        <p>
+          What connects the disciplines is the same instinct: get underneath the number. Whether that's reconciling
+          a torque reading between Magtrol and a PicoLogger channel, tracing a Non-Conformance Report back to root
+          cause on an aircraft wheel line, or validating a CFD solution against a known benchmark, the job is the
+          same — build the rig or the analysis that tells you the truth, then write it down so someone else can
+          trust it too.
+        </p>
+        <p>
+          I'm currently available for contract, FTC or permanent roles in systems engineering, test engineering,
+          quality engineering or manufacturing engineering, in the UK or India.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXPERIENCE ============ -->
+  <section class="section experience" id="experience">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num">§02</span>
+        <h2>Experience</h2>
+      </div>
+
+      <ol class="timeline">
+
+        <li class="timeline-item">
+          <div class="ti-meta">
+            <span class="ti-date">Mar 2026 – Jun 2026</span>
+            <span class="ti-loc">UK</span>
+          </div>
+          <div class="ti-body">
+            <h3>Systems Engineer <span class="ti-contract">(Contract)</span></h3>
+            <p class="ti-org">Novel Engineering Consultants</p>
+            <ul class="ti-points">
+              <li>Developed, integrated, commissioned and validated a Rolls-Royce fuel/oil systems environmental test rig, working across 5+ concurrent rig programmes for Rolls-Royce, Vertical Aerospace and MBDA.</li>
+              <li>Ran verification &amp; validation ahead of test entry — repeatability assessment, baseline comparison, and comparative performance testing between rig configurations (e.g. original vs. upgraded G-Rotor assemblies).</li>
+              <li>Designed and commissioned environmental test capability across vacuum, altitude (five setpoints, -0.2 to -1.0 bar), freezer and elevated-temperature envelopes.</li>
+              <li>Integrated fluid mechanical, electrical and DAQ/control subsystems; instrumented and calibrated flowmeters, pressure transducers, temperature probes and Magtrol torque measurement, cross-validating against PicoLogger data.</li>
+              <li>Investigated and resolved sealing, leakage and pressure-instability issues; authored test procedures, validation reports and engineering handover documentation.</li>
+              <li>Built an Excel VBA workflow converting hundreds of raw CSV test files into formatted engineering reports.</li>
+            </ul>
+            <div class="ti-tags">
+              <span>PicoLogger</span><span>Magtrol</span><span>Arduino</span><span>V&amp;V</span><span>Excel VBA</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="timeline-item">
+          <div class="ti-meta">
+            <span class="ti-date">Apr 2025 – Jan 2026</span>
+            <span class="ti-loc">UK</span>
+          </div>
+          <div class="ti-body">
+            <h3>Aerospace Quality &amp; MRO Engineer</h3>
+            <p class="ti-org">Honeywell Aerospace</p>
+            <ul class="ti-points">
+              <li>Supported AS9100 and EASA Part 145 compliance, presenting internal audit findings ahead of EASA / UK CAA regulatory assessments.</li>
+              <li>Inspected and assembled aircraft wheel and brake components to CMM and SPM standards across commercial wide- and narrow-body types.</li>
+              <li>Raised and managed Non-Conformance Reports (NCRs), supporting RCCA investigations to reduce repeat defects.</li>
+              <li>Maintained component traceability and quality documentation in SAP NetWeaver, supporting audit readiness.</li>
+            </ul>
+            <div class="ti-tags">
+              <span>AS9100</span><span>EASA Part 145</span><span>RCCA</span><span>SAP NetWeaver</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="timeline-item">
+          <div class="ti-meta">
+            <span class="ti-date">2022</span>
+            <span class="ti-loc">India</span>
+          </div>
+          <div class="ti-body">
+            <h3>Aerospace Engineering Intern</h3>
+            <p class="ti-org">Hindustan Aeronautics Limited</p>
+            <ul class="ti-points">
+              <li>Supported overhaul and manufacturing operations within an aerospace OEM environment; communicated inspection findings and corrective actions.</li>
+              <li>Updated technical documentation and quality records to maintain compliance with internal and statutory requirements.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="timeline-item">
+          <div class="ti-meta">
+            <span class="ti-date">2022</span>
+            <span class="ti-loc">India</span>
+          </div>
+          <div class="ti-body">
+            <h3>Precision Engineering Intern</h3>
+            <p class="ti-org">Lohatec Precision Pvt Ltd</p>
+            <ul class="ti-points">
+              <li>Performed dimensional inspections, reporting tolerance conformity against engineering drawings to production teams.</li>
+              <li>Assisted quality and process improvement activities, maintaining production records and component traceability.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="timeline-item">
+          <div class="ti-meta">
+            <span class="ti-date">2020 – 2023</span>
+            <span class="ti-loc">India</span>
+          </div>
+          <div class="ti-body">
+            <h3>Captain / Founder</h3>
+            <p class="ti-org">SAE Aero Club</p>
+            <ul class="ti-points">
+              <li>Founded and led a 100-person multidisciplinary team through the full UAV engineering lifecycle — requirements, design, build and flight test.</li>
+              <li>Developed flight-test protocols using iterative data modelling to optimise thrust-to-weight ratio and aerodynamic efficiency.</li>
+              <li>Presented technical progress and design decisions to competition judges and external stakeholders at national SAE competitions.</li>
+            </ul>
+            <p class="ti-aside">Also outside work: glider and hot-air balloon flight experience — a pilot's-eye view of the aerodynamics I otherwise only analyse from the ground.</p>
+          </div>
+        </li>
+
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS / CASE STUDIES ============ -->
+  <section class="section projects" id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num">§03</span>
+        <h2>Selected case studies</h2>
+        <p class="section-sub">Four pieces of work that show the range — hardware, quality, materials and analysis.</p>
+      </div>
+
+      <!-- CASE STUDY 1: Rolls-Royce test rig -->
+      <article class="case" id="case-rig">
+        <div class="case-tag">Flagship — Systems / Test Engineering</div>
+        <h3>Rolls-Royce fuel/oil systems environmental test rig</h3>
+        <p class="case-role">Novel Engineering Consultants · Systems Engineer (Contract) · 2026</p>
+
+        <div class="case-copy case-copy--full">
+            <h4>Context</h4>
+            <p>A test rig supporting Rolls-Royce fuel/oil systems programme work needed to demonstrate repeatable
+            performance across an environmental envelope — vacuum, five altitude setpoints from -0.2 to -1.0 bar
+            gauge (below atmospheric, simulating altitude), freezer and elevated temperature — before it could be
+            trusted for qualification testing. I worked this rig alongside four other concurrent builds for
+            Rolls-Royce, Vertical Aerospace and MBDA.</p>
+
+            <h4>System architecture</h4>
+            <div class="arch-diagram" role="img" aria-label="Simplified test rig architecture: controller drives actuator, which operates the mechanical and flow system, monitored by sensors feeding a data acquisition system into analysis and reporting.">
+              <div class="arch-node">Controller</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">Actuator<br><span>stepper / driver</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">Fluid / Mechanical<br><span>circuit under test</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">Sensors<br><span>flow · pressure · torque</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">DAQ<br><span>PicoLogger · Magtrol</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">Analysis &amp; Reporting</div>
+            </div>
+            <p class="fig-caption">Conceptual architecture — abstracted; actual rig geometry and client-specific configuration are confidential.</p>
+
+            <h4>What I did</h4>
+            <ul class="case-list">
+              <li>Integrated the fluid mechanical, electrical and DAQ/control subsystems into a single commissioned rig, driving the flow-control actuator through an Arduino-based stepper interface.</li>
+              <li>Installed and calibrated flowmeters, pressure transducers, temperature probes and Magtrol torque instrumentation, cross-checking scaling and measurement accuracy between the Magtrol readout and PicoLogger-logged data — resolving discrepancies before they reached a test report.</li>
+              <li>Ran repeatability and baseline-comparison testing, including a direct performance comparison between original and upgraded G-Rotor pump assemblies.</li>
+              <li>Investigated sealing, leakage and vacuum-holding issues found during commissioning, working them through to resolution as part of the safety and reliability case.</li>
+              <li>Wrote the test procedures, validation reports and handover documentation the rig needed to be trusted by people who weren't in the room while I built it.</li>
+              <li>Replaced a manual, file-by-file data process with an Excel VBA workflow that folded hundreds of raw PicoLogger/Magtrol CSV exports into a consistent engineering report format.</li>
+            </ul>
+
+            <h4>What it demonstrates</h4>
+            <p>Full-lifecycle ownership of a test rig — mechanical, electrical, software and reporting — plus the
+            instinct to distrust a single instrument until a second one agrees with it.</p>
+        </div>
+      </article>
+
+      <!-- CASE STUDY 2: Honeywell MRO -->
+      <article class="case" id="case-mro">
+        <div class="case-tag">Aerospace MRO &amp; Quality</div>
+        <h3>Wheel &amp; brake quality engineering — Honeywell Aerospace</h3>
+        <p class="case-role">Honeywell Aerospace · Aerospace Quality &amp; MRO Engineer · Apr 2025 – Jan 2026</p>
+
+        <div class="case-copy case-copy--full">
+            <h4>Context</h4>
+            <p>Nine months on a high-volume aerospace wheel and brake MRO line — disassembly, inspection and
+            reassembly across commercial wide- and narrow-body types (including 737, 777, A380 and MD-11 wheel
+            assemblies) — operating under AS9100 and EASA Part 145, where inspection, documentation and
+            traceability carry as much weight as the physical work.</p>
+
+            <h4>Process</h4>
+            <div class="arch-diagram" role="img" aria-label="Simplified quality process: component receipt, inspection against CMM and SPM standards, assembly or rework, non-conformance and RCCA investigation where required, traceability documentation in SAP, then release.">
+              <div class="arch-node">Component<br><span>receipt &amp; strip-down</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">Inspection<br><span>CMM / SPM</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">Assembly<br><span>hub, tyre, brake</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">NCR / RCCA<br><span>if non-conforming</span></div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">SAP Traceability</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node">Release</div>
+            </div>
+
+            <h4>What I did</h4>
+            <ul class="case-list">
+              <li>Disassembled and inspected aircraft wheels and small parts/bearings; carried out pre-assembly inspection and hub assembly to CMM and SPM standards.</li>
+              <li>Mounted and dismounted aircraft tyres, operated blast machines as part of the strip-down process, and detected leaks on wheel and tyre assemblies.</li>
+              <li>Raised Non-Conformance Reports and supported RCCA investigations, translating defect findings into corrective-action recommendations aimed at reducing repeat defects.</li>
+              <li>Maintained component traceability and quality documentation in SAP NetWeaver, including raising parts orders, to support audit readiness.</li>
+              <li>Contributed to internal compliance audits run ahead of EASA and UK CAA regulatory assessments.</li>
+              <li>Qualified as an in-house trainer for new starters on the line, and served as a site first aider.</li>
+            </ul>
+
+            <h4>What it demonstrates</h4>
+            <p>Regulatory-grade documentation discipline and root-cause thinking, learned on the shop floor rather
+            than in a classroom — the same discipline I later carried into test rig reporting at Novel Engineering.</p>
+        </div>
+      </article>
+
+      <!-- CASE STUDY 3: MSc Dissertation -->
+      <article class="case" id="case-composite">
+        <div class="case-tag">Award-winning — MSc Research</div>
+        <h3>Mechanical performance of a Rockwool-reinforced epoxy composite</h3>
+        <p class="case-role">MSc Dissertation · Kingston University · Winner, Best Postgraduate Project — School of Engineering</p>
+
+        <div class="case-copy case-copy--full">
+            <h4>Context</h4>
+            <p>An experimental investigation into whether mineral-wool waste material — Rockwool RW3 slab, roughly
+            75 kg/m³ — could function as a reinforcement in an EL2 epoxy / AT30 hardener system, as a route toward
+            lower-cost, more sustainable composite reinforcement for structural applications.</p>
+
+            <h4>What I did</h4>
+            <ul class="case-list">
+              <li>Prepared unreinforced and Rockwool-reinforced epoxy specimens across multiple fibre orientations and configurations.</li>
+              <li>Ran three-point bending (flexural) and tensile testing to characterise mechanical performance relative to the unreinforced baseline.</li>
+              <li>Analysed how reinforcement orientation and configuration affected flexural stiffness and tensile strength, and interpreted the failure behaviour behind the numbers.</li>
+              <li>Built a complementary ANSYS structural model of the same specimens and compared its predicted stiffness against the experimental results — the two tracked closely, which gave confidence in both the test data and the model.</li>
+              <li>Delivered recommendations on structural reliability and applicability to aerospace-relevant composite design.</li>
+            </ul>
+
+            <h4>Measured results</h4>
+            <p>The unreinforced resin baseline measured a flexural modulus of approximately <strong>0.85 GPa</strong>.
+            Depending on reinforcement orientation, reinforced specimens reached flexural modulus values of
+            approximately <strong>6.1–7.6 GPa</strong> in the best-performing configurations — with corresponding
+            tensile-strength gains also observed. These figures describe specific tested configurations rather than
+            a general property of Rockwool reinforcement, and orientation had a marked effect on the result.</p>
+
+            <h4>What it demonstrates</h4>
+            <p>Independent experimental design, materials characterisation, and — the reason it won the School's
+            Best Postgraduate Project prize — the ability to turn a raw dataset into a defensible engineering
+            conclusion.</p>
+            <p class="fig-caption">Test photographs, the modulus comparison chart and the award certificate to be added.</p>
+        </div>
+      </article>
+
+      <!-- CASE STUDY 4: CFD -->
+      <article class="case" id="case-cfd">
+        <div class="case-tag">Computational Aerodynamics</div>
+        <h3>ONERA M6 wing — transonic CFD validation</h3>
+        <p class="case-role">MSc coursework · ANSYS Fluent</p>
+
+        <div class="case-copy case-copy--full">
+            <h4>Context</h4>
+            <p>The ONERA M6 is a standard benchmark geometry for validating transonic CFD solvers against known
+            aerodynamic behaviour, including its characteristic shock structure. I ran a Reynolds-Averaged
+            Navier–Stokes simulation of the wing to practise setting up, running, and critically interpreting a
+            transonic CFD case rather than treating the solver as a black box.</p>
+
+            <h4>Setup</h4>
+            <ul class="case-list">
+              <li>Solver: ANSYS Fluent, Spalart–Allmaras turbulence model.</li>
+              <li>Flow conditions: Mach ≈ 0.84, angle of attack ≈ 3.06°, Reynolds number ≈ 11.72 million.</li>
+              <li>Reviewed resulting surface pressure distribution and shock location against the transonic behaviour expected for this geometry.</li>
+            </ul>
+
+            <h4>Result</h4>
+            <p>The simulation returned a lift coefficient (C<sub>L</sub>) of approximately <strong>0.259</strong>
+            and a drag coefficient (C<sub>D</sub>) of approximately <strong>0.019</strong> at these conditions.</p>
+
+            <h4>What it demonstrates</h4>
+            <p>Working knowledge of turbulence modelling, mesh and solver settings for transonic flow, and — just
+            as importantly — checking a CFD result against known aerodynamic behaviour rather than accepting the
+            first number the solver returns.</p>
+            <p class="fig-caption">Own contour/mesh plots to be added here once available. For background on the
+            benchmark itself, NASA's Turbulence Modeling Resource maintains a public reference case for the
+            <a href="https://turbmodels.larc.nasa.gov/onerawingnumerics_val.html" target="_blank" rel="noopener">ONERA M6 wing</a>.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ TOOLKIT ============ -->
+  <section class="section toolkit" id="toolkit">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num">§04</span>
+        <h2>Technical toolkit</h2>
+      </div>
+      <div class="toolkit-grid">
+
+        <div class="toolkit-group">
+          <h3>Test &amp; instrumentation</h3>
+          <ul class="chip-list">
+            <li>Test rig development &amp; commissioning</li>
+            <li>Verification &amp; Validation (V&amp;V)</li>
+            <li>PicoLogger</li>
+            <li>Magtrol torque measurement</li>
+            <li>Sensor calibration &amp; scaling</li>
+            <li>Flow / pressure / temperature instrumentation</li>
+            <li>Arduino DAQ &amp; automation</li>
+          </ul>
+        </div>
+
+        <div class="toolkit-group">
+          <h3>Simulation &amp; CAE</h3>
+          <ul class="chip-list">
+            <li>ANSYS / ANSYS Fluent (CFD)</li>
+            <li>MATLAB</li>
+            <li>Siemens NX</li>
+            <li>SolidWorks</li>
+          </ul>
+        </div>
+
+        <div class="toolkit-group">
+          <h3>Quality &amp; compliance</h3>
+          <ul class="chip-list">
+            <li>AS9100</li>
+            <li>EASA Part 145</li>
+            <li>EASA regulatory framework (wider)</li>
+            <li>FMEA</li>
+            <li>Root Cause Analysis / RCCA</li>
+            <li>8D problem solving</li>
+            <li>SAP NetWeaver</li>
+          </ul>
+        </div>
+
+        <div class="toolkit-group">
+          <h3>Programming &amp; reporting</h3>
+          <ul class="chip-list">
+            <li>Python</li>
+            <li>Excel VBA / macro automation</li>
+            <li>CSV / structured test data processing</li>
+            <li>Technical report &amp; procedure writing</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDUCATION ============ -->
+  <section class="section education" id="education">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num">§05</span>
+        <h2>Education &amp; credentials</h2>
+      </div>
+
+      <div class="edu-grid">
+        <div class="edu-item edu-item--award">
+          <div class="edu-award-badge">Best Postgraduate Project<br><span>School of Engineering</span></div>
+          <h3>MSc Aerospace Engineering <span class="edu-grade">(Distinction)</span></h3>
+          <p class="edu-org">Kingston University, London · 2024 – 2025</p>
+          <p class="edu-note">Dissertation: mechanical performance of a Rockwool-reinforced epoxy composite — see case study above.</p>
+        </div>
+
+        <div class="edu-item">
+          <h3>BEng Mechanical Engineering <span class="edu-grade">(Distinction)</span></h3>
+          <p class="edu-org">St Joseph Engineering College, India · 2019 – 2023</p>
+        </div>
+      </div>
+
+      <div class="cert-list">
+        <h3>Certifications</h3>
+        <ul>
+          <li>FMEA Training — FMEA Specialist Certification (Accredited)</li>
+          <li>Explore Engineering Job Simulation — GE Aerospace</li>
+          <li>Root Cause Analysis &amp; the 8D Problem Solving Bootcamp — Udemy</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section contact" id="contact">
+    <div class="wrap contact-grid">
+      <div>
+        <div class="section-head">
+          <span class="section-num">§06</span>
+          <h2>Contact</h2>
+        </div>
+        <p class="contact-lede">
+          Full right to work in the UK · Immediately available · Open to contract, FTC or permanent roles
+          in the UK or India.
+        </p>
+      </div>
+      <div class="contact-details">
+        <a href="mailto:sushanharish24@gmail.com" class="contact-link">
+          <span class="contact-label">Email</span>
+          <span class="contact-value">sushanharish24@gmail.com</span>
+        </a>
+        <a href="tel:+447717242507" class="contact-link">
+          <span class="contact-label">Phone</span>
+          <span class="contact-value">+44 7717 242507</span>
+        </a>
+        <a href="https://www.linkedin.com/in/sushan-harish" target="_blank" rel="noopener" class="contact-link">
+          <span class="contact-label">LinkedIn</span>
+          <span class="contact-value">linkedin.com/in/sushan-harish</span>
+        </a>
+        <span class="contact-link contact-link--static">
+          <span class="contact-label">Location</span>
+          <span class="contact-value">Bristol, UK</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span>© <span id="year"></span> Sushan Harish</span>
+    <span class="footer-sep">·</span>
+    <span>Built as a static site — no analytics, no tracking.</span>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// Sushan Harish — portfolio site interactions
+// No external dependencies. Mobile nav toggle only — the site
+// is otherwise static so it works the same whether it's hosted
+// or opened directly as a local file.
+// ============================================================
+
+(function () {
+  "use strict";
+
+  var yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  var header = document.getElementById("site-header");
+  var navToggle = document.getElementById("navToggle");
+  var mobileNav = document.getElementById("mobileNav");
+
+  if (navToggle && header) {
+    navToggle.addEventListener("click", function () {
+      var isOpen = header.classList.toggle("nav-open");
+      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    if (mobileNav) {
+      mobileNav.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          header.classList.remove("nav-open");
+          navToggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    }
+  }
+})();
+
+</script>
+</body>
+</html>
